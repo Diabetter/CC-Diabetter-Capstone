@@ -12,6 +12,33 @@ const pool = mysql.createPool({
 	database: process.env.MYSQL_DATABASE,
 }).promise();
 
+export async function createTableIfNotExists() {
+	try {
+		await pool.query(`
+			CREATE TABLE IF NOT EXISTS users (
+				id INT AUTO_INCREMENT PRIMARY KEY,
+				name VARCHAR(255) NOT NULL,
+				email VARCHAR(255) NOT NULL UNIQUE,
+				password VARCHAR(255),
+				google_id VARCHAR(255) UNIQUE,
+				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+			);
+		`);
+		await pool.query(`
+			CREATE TABLE IF NOT EXISTS invalidated_tokens (
+				id INT AUTO_INCREMENT PRIMARY KEY,
+				token VARCHAR(255) NOT NULL,
+				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+			);
+		`);
+	} catch (error) {
+		mySQLErrorHandler(error);
+		throw error;
+	}
+}
+
 export async function getUserById(id) {
 	try {
 		const [data] = await pool.query(`
@@ -78,6 +105,31 @@ export async function logoutUser(accessToken) {
 	} catch (error) {
 		mySQLErrorHandler(error);
 		throw error;
+	}
+}
+
+export async function getUserByGoogleId(id) {
+	try {
+		const [data] = await pool.query(`
+			SELECT * \
+			FROM users\
+			WHERE google_id = ?;`, [id]);
+		return data[0];
+	} catch (error) {
+			mySQLErrorHandler(error);
+			throw error;
+	}
+}
+
+export async function createUserWithGoogleId(googleId) {
+	try {
+		const [data] = await pool.query(`
+			INSERT INTO users (name, email, password, google_id) \
+			VALUES (?, ?, ?, ?);`, [googleId.name, googleId.email, googleId.password, googleId.googleId]);
+		return getUserById(data.insertId);
+	} catch (error) {
+			mySQLErrorHandler(error);
+			throw error;
 	}
 }
 
