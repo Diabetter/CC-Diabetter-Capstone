@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { getUserByGoogleId, createUser } from "../helpers/database.js";
+import { getUserByGoogleId, getUserById, createUserWithGoogleId } from "./helpers/database.js";
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -11,10 +11,11 @@ async (accessToken, refreshToken, profile, done) => {
     try {
         let user = await getUserByGoogleId(profile.id);
         if (!user) {
-            user = await createUser({
+            user = await createUserWithGoogleId({
                 googleId: profile.id,
                 email: profile.emails[0].value,
-                name: profile.displayName
+                name: profile.displayName,
+                password: 'byGoogleId',
             });
         }
         return done(null, user);
