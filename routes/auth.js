@@ -7,5 +7,7 @@ router.post('/api/register', FirebaseAuthController.registerUser);
 router.post('/api/login', FirebaseAuthController.loginUser);
 router.post('/api/logout', FirebaseAuthController.logoutUser);
 router.post('/api/reset-password', FirebaseAuthController.resetPassword);
+router.post('/api/verify-token', FirebaseAuthController.verifyToken);
+router.post('/api/create-profile', FirebaseAuthController.createProfile);
 
 export default router;

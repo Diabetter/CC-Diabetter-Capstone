@@ -13,8 +13,10 @@
   "author": "C241-PS361",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/firestore": "^7.7.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "express-session": "^1.18.0",
