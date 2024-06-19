@@ -131,6 +131,7 @@ class FirebaseAuthController {
         message: "all fields are required",
       });
     }
+    const food_id = ''
     db.collection("profile")
       .doc(uid)
       .set({
@@ -140,6 +141,7 @@ class FirebaseAuthController {
         weight,
         height,
         activities,
+        food_id,
       })
       .then(() => {
         res.status(201).json({ message: "Profile created successfully" });
