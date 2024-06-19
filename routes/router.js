@@ -46,7 +46,7 @@ router.post("/api/predict", async (req, res) => {
   }
 });
 
-router.post("/api/getmakanan", async (req, res) => {
+router.post("/api/get-makanan", async (req, res) => {
   try {
     // Validate request body
 
@@ -90,7 +90,11 @@ router.post("/api/history", async (req, res) => {
   await historyFeature.getHistory(historyparam, res);
 });
 
-router.delete("/api/deleteHistory", async (req, res) => {
+router.get("/api/all-history", async (res) => {
+  await historyFeature.getAllHistory(res);
+});
+
+router.delete("/api/delete-history", async (req, res) => {
   if (!req.body || !req.body.id) {
     return res.status(400).send('Missing required field "id" in request body.');
   }
