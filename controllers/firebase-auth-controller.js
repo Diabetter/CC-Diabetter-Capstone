@@ -125,6 +125,65 @@ class FirebaseAuthController {
         })
     }
 
+    getProfile(userid){
+        const { uid } = userid;
+        if(!uid) {
+            return { message: "uid is required"}
+        }
+
+        db.collection('profile').doc(uid).get()
+        .then((doc) => {
+            if (doc.exists) {
+                data = doc.data();
+                return data;
+            } else {
+                return { message: "Profile not found" };
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    async editProfile(req, res) {
+        const { uid } = req.body;
+
+        try {
+            const doc = await db.collection('profile').doc(uid).get();
+            let data = {};
+
+            if (doc.exists) {
+                data = doc.data();
+            } else {
+                return res.status(404).json({ message: "Profile not found" });
+            }
+
+            // Update data dengan yang ada di req.body, atau gunakan yang lama jika tidak ada yang baru
+            const {
+                username = data.username,
+                gender = data.gender,
+                age = data.age,
+                weight = data.weight,
+                height = data.height,
+                activities = data.activities
+            } = req.body;
+
+            await db.collection('profile').doc(uid).set({
+                username,
+                gender,
+                age,
+                weight,
+                height,
+                activities
+            });
+
+            res.status(200).json({ message: "Profile updated successfully" });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Error updating profile" });
+        }
+    }
+
     verifyToken(req, res){
         const idToken = req.headers.authorization.split(' ')[1];
         try {
