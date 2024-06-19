@@ -150,24 +150,36 @@ class FirebaseAuthController {
       });
   }
 
-  async getProfile(userid) {
-    const uid = userid;
+  async getProfile(req, res) {
+    const uid = req.params.userid;
     if (!uid) {
-      return { message: "uid is required" };
+      return res.status(422).json({
+        message: "uid is required"
+      });
     }
 
-    const collectionRef = db.collection("profile");
+    try {
+      const collectionRef = db.collection("profile");
 
-    // Use `doc` to reference the document based on the passed variable
-    const docRef = collectionRef.doc(uid);
+      // Use `doc` to reference the document based on the passed variable
+      const docRef = collectionRef.doc(uid);
 
-    // Use `get` to retrieve the document
-    const docSnapshot = await docRef.get();
-    if (!docSnapshot.exists) {
-      return { message: "Profile not found" };
+      // Use `get` to retrieve the document
+      const docSnapshot = await docRef.get();
+
+      if (!docSnapshot.exists) {
+        return res.status(404).json({
+          message: "Profile not found"
+        });
+      }
+      const data = docSnapshot.data();
+      return res.status(200).json(data);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        error: "Error retrieving profile"
+      });
     }
-    const data = docSnapshot.data();
-    return data;
   }
 
   async editProfile(req, res) {
@@ -180,7 +192,9 @@ class FirebaseAuthController {
       if (doc.exists) {
         data = doc.data();
       } else {
-        return res.status(404).json({ message: "Profile not found" });
+        return res.status(404).json({
+          message: "Profile not found"
+        });
       }
 
       // Update data dengan yang ada di req.body, atau gunakan yang lama jika tidak ada yang baru
@@ -191,6 +205,7 @@ class FirebaseAuthController {
         weight = data.weight,
         height = data.height,
         activities = data.activities,
+        food_id = data.food_id,
       } = req.body;
 
       await db.collection("profile").doc(uid).set({
@@ -200,12 +215,17 @@ class FirebaseAuthController {
         weight,
         height,
         activities,
+        food_id,
       });
 
-      res.status(200).json({ message: "Profile updated successfully" });
+      res.status(200).json({
+        message: "Profile updated successfully"
+      });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Error updating profile" });
+      res.status(500).json({
+        error: "Error updating profile"
+      });
     }
   }
 

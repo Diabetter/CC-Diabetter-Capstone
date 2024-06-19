@@ -15,6 +15,7 @@ router.post("/api/verify-token", FirebaseAuthController.verifyToken);
 
 router.post("/api/create-profile", FirebaseAuthController.createProfile);
 router.post("/api/edit-profile", FirebaseAuthController.editProfile);
+router.get('/api/get-profile/:userid', FirebaseAuthController.getProfile);
 
 router.post("/api/predict", async (req, res) => {
   try {
