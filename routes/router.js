@@ -15,7 +15,7 @@ router.post("/api/verify-token", FirebaseAuthController.verifyToken);
 
 router.post("/api/create-profile", FirebaseAuthController.createProfile);
 router.post("/api/edit-profile", FirebaseAuthController.editProfile);
-router.get('/api/get-profile/:userid', FirebaseAuthController.getProfile);
+router.get("/api/get-profile/:userid", FirebaseAuthController.getProfile);
 
 router.post("/api/predict", async (req, res) => {
   try {
@@ -28,7 +28,7 @@ router.post("/api/predict", async (req, res) => {
     if (!req.body.rating) {
       req.body.rating = 1;
     }
-    const profile = await FirebaseAuthController.getProfile(req.body.uid);
+    const profile = await FirebaseAuthController.getlocalProfile(req.body.uid);
     if (profile.message && profile.message === "Profile not found") {
       // If the profile is not found, send a 404 response with an error message
       return res.status(404).send({ error: "Profile not found" });
@@ -90,8 +90,14 @@ router.post("/api/history", async (req, res) => {
   await historyFeature.getHistory(historyparam, res);
 });
 
-router.get("/api/all-history", async (res) => {
-  await historyFeature.getAllHistory(res);
+router.post("/api/all-history", async (req, res) => {
+  try {
+    const historyData = await historyFeature.getAllHistory();
+    res.status(200).json(historyData); // Send the returned data from getAllHistory
+  } catch (error) {
+    console.error("Error in getAllHistory:", error);
+    res.status(500).json({ status: "error", message: "Internal Server Error" }); // Handle any errors from getAllHistory with appropriate status code
+  }
 });
 
 router.delete("/api/delete-history", async (req, res) => {
@@ -102,6 +108,18 @@ router.delete("/api/delete-history", async (req, res) => {
 
   // Call getMakananByName function with validated data
   await historyFeature.deleteHistory(deletehistoryparam, res);
+});
+
+router.post("/api/store-predict", async (req, res) => {
+  if (!req.body || !req.body.data) {
+    return res.status(400).send('Missing required field "id" in request body.');
+  }
+  await FirebaseAuthController.editProfile;
+  return await predictController.storePredict(
+    req.body.data.id,
+    req.body.data,
+    res
+  );
 });
 
 export default router;
