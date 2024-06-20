@@ -16,7 +16,7 @@ router.post("/api/verify-token", FirebaseAuthController.verifyToken);
 
 router.post("/api/create-profile", FirebaseAuthController.createProfile);
 router.post("/api/edit-profile", FirebaseAuthController.editProfile);
-router.get("/api/get-profile/:userid", FirebaseAuthController.getProfile);
+router.post("/api/get-profile", FirebaseAuthController.getProfile);
 
 router.post("/api/predict", async (req, res) => {
   try {
@@ -177,6 +177,7 @@ router.post("/api/temp-predict", async (req, res) => {
     req.body.rating = 1;
   }
   const profile = await FirebaseAuthController.getlocalProfile(req.body.uid);
+  console.log(profile.food_id);
   if (profile.message && profile.message === "Profile not found") {
     // If the profile is not found, send a 404 response with an error message
     return res.status(404).send({ error: "Profile not found" });

@@ -172,7 +172,7 @@ class FirebaseAuthController {
   }
 
   async getProfile(req, res) {
-    const uid = req.params.userid;
+    const uid = req.body.userid;
     if (!uid) {
       return res.status(422).json({
         message: "uid is required",
