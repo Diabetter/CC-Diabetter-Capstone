@@ -131,7 +131,7 @@ class FirebaseAuthController {
         message: "all fields are required",
       });
     }
-    const food_id = ''
+    const food_id = "";
     db.collection("profile")
       .doc(uid)
       .set({
@@ -151,12 +151,31 @@ class FirebaseAuthController {
         res.status(500).json({ error: "Error creating profile" });
       });
   }
+  async getlocalProfile(userid) {
+    const uid = userid;
+    if (!uid) {
+      return { message: "uid is required" };
+    }
+
+    const collectionRef = db.collection("profile");
+
+    // Use `doc` to reference the document based on the passed variable
+    const docRef = collectionRef.doc(uid);
+
+    // Use `get` to retrieve the document
+    const docSnapshot = await docRef.get();
+    if (!docSnapshot.exists) {
+      return { message: "Profile not found" };
+    }
+    const data = docSnapshot.data();
+    return data;
+  }
 
   async getProfile(req, res) {
     const uid = req.params.userid;
     if (!uid) {
       return res.status(422).json({
-        message: "uid is required"
+        message: "uid is required",
       });
     }
 
@@ -171,7 +190,7 @@ class FirebaseAuthController {
 
       if (!docSnapshot.exists) {
         return res.status(404).json({
-          message: "Profile not found"
+          message: "Profile not found",
         });
       }
       const data = docSnapshot.data();
@@ -179,7 +198,7 @@ class FirebaseAuthController {
     } catch (error) {
       console.error(error);
       return res.status(500).json({
-        error: "Error retrieving profile"
+        error: "Error retrieving profile",
       });
     }
   }
@@ -195,7 +214,7 @@ class FirebaseAuthController {
         data = doc.data();
       } else {
         return res.status(404).json({
-          message: "Profile not found"
+          message: "Profile not found",
         });
       }
 
@@ -221,12 +240,12 @@ class FirebaseAuthController {
       });
 
       res.status(200).json({
-        message: "Profile updated successfully"
+        message: "Profile updated successfully",
       });
     } catch (error) {
       console.error(error);
       res.status(500).json({
-        error: "Error updating profile"
+        error: "Error updating profile",
       });
     }
   }
