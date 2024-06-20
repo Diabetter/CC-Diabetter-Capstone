@@ -10,13 +10,13 @@ class HistoryFeature {
     this.collectionRef = this.firestore.collection("predictions");
   }
 
-  getAllHistory = async (res) => {
+  getAllHistory = async () => {
     try {
       const snapshot = await this.collectionRef.get();
 
       if (snapshot.empty) {
         console.log("No matching documents.");
-        return res.status(400).json({ status: "fail", message: "No Data" });
+        return { status: "fail", message: "No Data" }; // Return an object with status and message
       }
 
       const docs = [];
@@ -24,14 +24,14 @@ class HistoryFeature {
         if (docs.length < 10) {
           docs.push({ id: doc.id, ...doc.data() });
         }
-      })
+      });
 
-      return res.status(200).json({ status: "success", docs });
+      return { status: "success", docs }; // Return an object with status and data
     } catch (error) {
       console.error("Error getting documents: ", error);
-      return res.status(400).json("Error getting documents");
+      return { status: "error", message: "Error getting documents" }; // Return an object with error message
     }
-  }
+  };
 
   getHistory = async (uid, res) => {
     try {

@@ -27,8 +27,8 @@ class getDataMakanan {
       }
 
       const data = docSnapshot.data();
-      food_url = `https://storage.googleapis.com/diabeter-425219.appspot.com/foodPicts/foodPicts_${data.no}.jpg`
-      return res.status(200).json({ status: "success", url:food_url, data }); // Assuming success status code is 200
+      let food_url = `https://storage.googleapis.com/diabeter-425219.appspot.com/foodPicts/foodPicts_${data.no}.jpg`;
+      return res.status(200).json({ status: "success", url: food_url, data }); // Assuming success status code is 200
     } catch (error) {
       console.error(error);
       return res

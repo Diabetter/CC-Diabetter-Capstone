@@ -1,4 +1,3 @@
-import StoreDataPredict from "./storeData.js";
 import crypto from "crypto";
 import { exec } from "child_process";
 import { Firestore } from "@google-cloud/firestore";
@@ -81,8 +80,10 @@ class predictController {
           food1: null,
           food2: null,
           food3: null,
-          kebutuhanKalori: null,
-          totalKalori: null,
+          kalori: null,
+          karbohidrat: null,
+          protein: null,
+          lemak: null,
           rating: null,
           uid: uid,
         };
@@ -107,23 +108,22 @@ class predictController {
           foodIndex++; // Move to the next food property
         }
 
-        const totalKalori = stdout.match(
-          /Total Kalori dari makanan yang direkomendasikan: ([\d.]+)/
-        );
+        const totalRegex =
+          /Total (\w+) dari makanan yang direkomendasikan: ([\d.]+)/g;
+        while ((match = totalRegex.exec(stdout)) !== null) {
+          let metricName = match[1];
+          let metricValue = parseFloat(match[2]);
 
-        if (totalKalori) {
-          foodData.totalKalori = parseFloat(totalKalori[1]);
+          if (metricName.toLowerCase() === "kalori") {
+            foodData.kalori = metricValue;
+          } else if (metricName.toLowerCase() === "karbohidrat") {
+            foodData.karbohidrat = metricValue;
+          } else if (metricName.toLowerCase() === "protein") {
+            foodData.protein = metricValue;
+          } else if (metricName.toLowerCase() === "lemak") {
+            foodData.lemak = metricValue;
+          }
         }
-
-        const totalCaloriesMatch = stdout.match(
-          /Total Kalori: (\d+\.\d+) kalori per hari/
-        );
-
-        if (totalCaloriesMatch) {
-          foodData.kebutuhanKalori = parseFloat(totalCaloriesMatch[1]);
-        }
-
-        await StoreDataPredict.storeData(id, foodData);
         const message = "Model prediction successful";
         return res.status(201).json({ status: "success", message, foodData });
       });
@@ -134,6 +134,31 @@ class predictController {
       });
     }
   };
+  async storePredict(id, data, res) {
+    try {
+      if (!id || !data) {
+        return res
+          .status(400)
+          .send({ status: "fail" }, { message: "there is no data to store" });
+      }
+
+      const firestore = new Firestore({
+        keyFilename: process.env.KEY_FILE,
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        databaseId: process.env.DATABASE_NAME,
+      });
+
+      const predictCollection = firestore.collection("predictions");
+      await predictCollection.doc(id).set(data);
+      const message = "Model prediction successful";
+      return res.status(201).json({ status: "success", message, id });
+    } catch (error) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Terjadi kesalahan dalam melakukan penyimpanan data",
+      });
+    }
+  }
 }
 
 export default new predictController();
