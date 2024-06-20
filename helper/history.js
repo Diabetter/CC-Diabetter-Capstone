@@ -45,7 +45,7 @@ class HistoryFeature {
       const filteredDocs = [];
       snapshot.forEach((doc) => {
         const data = doc.data();
-        if (data.uid.includes(uid)) {
+        if (data.uid == uid) {
           filteredDocs.push({ id: doc.id, ...data });
         }
       });
