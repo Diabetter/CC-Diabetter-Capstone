@@ -81,20 +81,6 @@ This project is a Node.js application that uses Firebase for authentication and 
     }
     ```
 
-- **Logout User**
-    ```
-    POST /api/logout
-    ```
-
-- **Reset Password**
-    ```
-    POST /api/reset-password
-    Body:
-    {
-        "email": "user@example.com"
-    }
-    ```
-
 ### Profile Management
 
 - **Create Profile**
@@ -161,6 +147,15 @@ This project is a Node.js application that uses Firebase for authentication and 
     ```
 
 ### Data Retrieval
+
+- **Get Menu**
+    ```
+    POST /api/get-menu
+    Body:
+    {
+        "id": "menu_id"
+    }
+    ```
 
 - **Get Food Data**
     ```
