@@ -49,6 +49,19 @@ This project is a Node.js application that uses Firebase for authentication and 
     FIREBASE_MESSAGING_SENDER_ID=<your_firebase_messaging_sender_id>
     FIREBASE_APP_ID=<your_firebase_app_id>
     FIREBASE_MEASUREMENT_ID=<your_firebase_measurement_id>
+    GCP_UNIVERSE_DOMAIN=<your-universe-domain>
+    GCP_TYPE=<your-gcp-type>
+    GCP_PROJECT_ID=<your-project-id>
+    GCP_PRIVATE_KEY_ID=<your-private-key-id>
+    GCP_PRIVATE_KEY=<your-private-key>
+    GCP_CLIENT_EMAIL=<your-client-email>
+    GCP_CLIENT_ID=<your-client-id>
+    GCP_AUTH_URI=<your-auth-uri>
+    GCP_TOKEN_URI=<your-token-uri>
+    GCP_AUTH_PROVIDER_X509_CERT_URL=<your-auth-cert-url>
+    GCP_CLIENT_X509_CERT_URL=<your-client-cert-url>
+    KEY_FILE=<your-key-file-name>
+    DATABASE_NAME=<your-database-name>
     ```
 
 5. **Start the server:**
